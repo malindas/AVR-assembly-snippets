@@ -1,0 +1,60 @@
+
+/*
+==========--Binary to BCD--==============
+This module convert 16 bit binary into 4 digit,16 bit BCD
+
+Created: 11/10/2016 11:23:24 AM
+Author:Malinda Sulochana Silva
+Copyright.All Rights Reserved
+
+INPUT-->	Upper byte (r17),lower byte (r16)
+OUTPUT-->	Upper byte (r17),lower byte (r16)
+
+*/
+			
+BCD:	
+;------Context savig 
+		push r3
+		push r5
+		push r16
+		ldi r16,$33
+		mov r3,r16
+		pop r16
+		push r18
+		push r19
+		push r20
+
+BCD_GO:	add r18,r3		;add 3 to lower byte
+		add r19,r3		;add 3 to higher byte	
+		sbrs r18,3		;if bit 3 of lowr byte is set, keep 3
+		subi r18,$03	;if not sub 3
+		sbrs r18,7		;if bit 7 of lower byte is set, keep 3
+		subi r18,$30	;if not sub 3
+		sbrs r19,3		;if bit 3 of lowr byte is set, keep 3
+		subi r19,$03	;if not sub 3
+		sbrs r19,7		;if bit 7 of lowr byte is set, keep 3
+		subi r19,$30	;if not sub 3
+		out SREG,r5		;save sreg
+		lsl	r16			;shift original lower byte
+		rol r17			;shift original higher byte
+		rol r18			;rotate result lower byte
+		rol r19			;rotate result higher byte
+		clc				;clear carry -safty
+		in	r5,SREG		;recover sreg		
+		cpi r20,$0f		;loop counter limit
+		brlo LOOP		;loop
+
+;-------finalizing
+		clr r20			;clear loop counter
+		mov r16,r19		;set final lower byte
+		mov r17,r18		;set final higher byte
+		
+		pop r20
+		pop r19
+		pop r18
+		pop r5
+		pop r3
+		ret				;END OF CONVERSION
+
+LOOP:	inc r20			;increment loop counter
+		rjmp BCD_GO		;loop

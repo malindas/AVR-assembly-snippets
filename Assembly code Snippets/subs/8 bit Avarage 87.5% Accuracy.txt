@@ -1,0 +1,46 @@
+/*
+==========--8bit AVERAGE--==========
+This module calculate 2, 8 bit binary avarage
+it will genarate 8/7 accuracy
+
+Created: 11/10/2016 11:23:24 AM
+Author:Malinda Sulochana Silva
+Copyright.All Rights Reserved
+
+INPUT-->	New Value (r17),Old value (r16)
+OUTPUT-->	Average (r16)
+
+*/
+AVRG:	
+;-------Context saving		
+		push r2
+		push r18
+		push r19
+		clr r2
+			
+		mov r18,r16		;save value
+		rol r16			;double it
+		rol r19			;
+		rol r16			;again double it
+		rol r19			;
+		rol r16			;again double it
+		rol r19			;	
+		add r16,r18		;add old value to it again (total 7 old values)
+		adc r19,r2		;
+		add r16,r17		;add new value
+		adc r19,r2		;
+		ror r19			;divide by 2
+		ror r16			;
+		clc				;
+		ror r19			;divide by 2 again
+		ror r16			;
+		clc
+		ror r19			;divide by 2 again
+		ror r16			;
+
+		clr r17
+		pop r2
+		pop r18
+		pop r19
+
+		ret

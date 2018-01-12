@@ -1,0 +1,19 @@
+==========--DISPLAYING--==========
+This module display what is in the disbuf
+
+
+Created: 11/10/2016 11:23:24 AM
+Author:Malinda Sulochana Silva
+Copyright.All Rights Reserved
+
+*/
+DISPlAY:
+		
+		clr YH
+		ldi YL,dplbuf+dig
+		ld r16,Y
+		ldi YL,disbuf
+		add YL,r16
+		ld r16,Y
+		out PORTB,r16
+		ret

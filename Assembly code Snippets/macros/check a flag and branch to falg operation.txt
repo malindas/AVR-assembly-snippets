@@ -1,0 +1,4 @@
+\.macro		chkflags ;(flag,bit,flagop)
+			sbrc	@0,@1
+			rjmp 	@2
+.endm

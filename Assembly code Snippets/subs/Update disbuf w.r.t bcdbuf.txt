@@ -1,0 +1,31 @@
+/*
+==========--UPDATE DISPLAY BUFFER--==========
+This module will Update the display
+considering BCD buffer values
+
+Created: 11/10/2016 11:23:24 AM
+Author:Malinda Sulochana Silva
+Copyright.All Rights Reserved
+
+*/
+LD_DIS:
+		push r17
+		clr r17
+
+		
+		clr YH			;set y pointer to take bcd value
+		ldi YL,bcdbuf
+		ldi ZH,06		;set z pointer to take dis image
+		add	YL,r17		;
+		ld r16,Y		;
+		mov ZL,r16		;
+		lpm				;take dis image from rom
+		ldi YL,disbuf	;set y pointer to update disbuf
+		add YL,r17		;
+		st Y,r0			;update disbuf
+		inc r17			;go for next image
+		andi r17,$03	;	
+		brne LD_DIS+2	;
+
+		pop r17
+		ret

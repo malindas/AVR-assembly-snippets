@@ -1,0 +1,29 @@
+
+/*
+==========--DEBOUNCE KEYS--==========
+This module will debounce the keys
+
+Created: 30/01/2017 11:12:24 PM
+Author:Malinda Sulochana Silva
+Copyright.All Rights Reserved
+
+*/
+DBNCE:	clc
+		sbic PORTB,0	;read pin and skip if set		;
+		sec				;
+		rol r17			;set state as one
+		cpi r18,8		;if 8 states were marked update keys register
+		breq PC+3
+		inc r18			;inc counter
+		rjmp DBNCE		;
+		clr r18			;
+		ldi YH,0		;set y pointer to dplbuf+keys
+		ldi YL,dplbuf+keys
+		cpi r17,$ff		;check for btn clk state
+		breq PC+4		;
+		clr r17
+		st Y,r17
+		ret
+		ser r17
+		st Y,r17
+		ret

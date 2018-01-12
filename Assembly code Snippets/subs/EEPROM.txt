@@ -1,0 +1,54 @@
+;------------------------ eeprom routines
+;write into eeprom from ram datbuf
+ewr:	rcall	esetup		;setup pointer & counter
+	rcall	eestad		;setup ee starting address
+	rjmp	PC+2
+Write:	rcall	eenxad		;set next eeaddress
+	ld	temp,X+		;load next data
+	out 	EEDR,temp	;write data
+	sbi 	EECR,EEMWE	;enable to write
+	sbi 	EECR,EEWE	;trigger write action
+	dec	lpcnt		;end of data ?
+	brne	write
+	reti			;re-enable interrupts
+
+;read data into ram datbuf from eeprom
+erd:	rcall	esetup		;setup pointer & counter
+	rcall	eestad		;setup ee starting address
+	rjmp	PC+2
+Read:	rcall	eenxad		;set next eeaddress
+	sbi	EECR,EERE	;Start to read by writing EERE
+	in	temp,EEDR	;Read data from data register
+	st	X+,temp
+	dec	lpcnt		;end of data ?
+	brne	read
+	reti			;re-enable interrupts
+
+;setup eprom access to r/w. pointer=X (called from erd & ewr)
+esetup:	ldi	XL,low(datbuf)	;point X to datbuf
+	ldi	XH,high(datbuf)
+	ldi	lpcnt,32	;to transfer 32 bytes
+	cli			;stop interrupts until done
+	ret
+
+;wait and setup starting eeadr. called from read & write only.
+eestad:	sbic 	EECR,EEWE	;wait till previous
+	rjmp	eestad		;  cycle is over
+;setup ee starting address
+	clr	temp
+	out	EEARH,temp
+	lds	temp,vbuf+pkt
+	swap	temp		;*16
+	lsl	temp		;*2
+	out	EEARL,temp	;adj low address
+	ret
+
+;wait and set next eeadr. called from read & write only.
+eenxad:	sbic 	EECR,EEWE	;wait till previous
+	rjmp	eenxad		;  cycle is over
+;setup ee next address
+	in 	temp,EEARL
+	inc	temp
+	out	EEARL,temp	;adj low address
+	ret
+

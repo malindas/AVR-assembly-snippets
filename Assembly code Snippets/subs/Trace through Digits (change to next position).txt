@@ -1,0 +1,28 @@
+/*
+==========--GOTO NEXT DIGIT--==========
+This module traces through display
+
+Created: 11/10/2016 11:23:24 AM
+Author:Malinda Sulochana Silva
+Copyright.All Rights Reserved
+
+*/
+NXTSCN:
+		push r16
+
+		clr r16
+		out PORTB,r16	;clear display 
+		ldi ZH,$06		;set z pointer to get firing position
+		ldi ZL,$20		;
+		clr YH			;set y pointer to update dig
+		ldi YL,dplbuf+dig	;
+		ld r16,Y			;
+		add ZL,r16			;
+		lpm					;load firing position
+		out PORTD,r0		;on next firing position 
+		inc r16				;inc dig
+		andi r16,$03		;
+		sts dplbuf+dig,r16	;update dig
+		
+		pop r16				
+		ret				

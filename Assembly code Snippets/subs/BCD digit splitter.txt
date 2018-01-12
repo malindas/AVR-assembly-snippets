@@ -1,0 +1,39 @@
+/*
+==========--Splitt 8bit into 4--==========
+This module will splitt 8 bit BCD
+into 4 registers
+
+*should equate bcdbuf=$_ _
+
+Created: 11/10/2016 11:23:24 AM
+Author:Malinda Sulochana Silva
+Copyright.All Rights Reserved
+
+INPUT-->	Upper byte (r17),Lower byte (r16)
+OUTPUT-->	in bcdbuf>> (1000s),(100s),(10s),(1s)
+
+*/	
+SPLITT:	push r18
+		push r19
+		
+		mov r18,r16
+		mov r19,r17
+		andi r16,$0f
+		andi r17,$0f
+		swap r18
+		swap r19
+		andi r18,$0f
+		andi r19,$0f
+;-------set values to BCD buffer
+		ldi YH,$00
+		ldi YL,bcdbuf	;set Y pointer lower to bcdbuf
+		st Y+,r19
+		st Y+,r17
+		st Y+,r18
+		st Y,r16
+		
+		pop r19
+		pop r18	
+		clr r16
+		clr r17
+		ret	
